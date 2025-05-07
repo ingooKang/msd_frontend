@@ -1,0 +1,128 @@
+.table-wrapper {
+    width: 70%;
+    margin: 0 auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+  }
+  
+  table {
+    min-width: 800px;
+    border-collapse: collapse;
+    width: 100%; /* 부모(70%) 기준 */
+    font-size: 14px;
+  }
+  
+  th {
+    text-align: center; /* 👈 가운데 정렬 */
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background-color: #f4f4f4;
+    font-weight: bold;
+    
+  }
+  td {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  thead {
+    background-color: #f4f4f4;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  tbody tr:hover {
+    background-color: #eef6ff;
+  }
+
+  /* 리그 뱃지 */
+.league-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+  }
+  
+  /* 팀 이름 강조 */
+  .team-name {
+    font-weight: bold;
+  }
+  
+  .score {
+    color: #ff6600;
+    font-weight: bold;
+  }
+  
+/* 공통 뱃지 */
+.result-badge {
+    display: inline-block;
+    min-width: 24px;
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    line-height: 1;
+    margin: 2px 0;
+  }
+  
+  
+.result-win {
+    background-color: #e60000;
+  }
+  
+  .result-lose {
+    background-color: #0073c6;
+  }
+  
+  .result-draw {
+    background-color: #333;
+  }
+  
+  .result-etc {
+    background-color: #999;
+  }
+  
+  /* 승팀 강조 */
+  .team-win {
+    font-weight: bold;
+    font-style: italic;
+    color: #e60000;
+  }
+  
+  /* 스포츠별 색상 뱃지 */
+  .sport-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+  }
+  
+  .sport-soccer {
+    background-color: #2e8b57; /* 축구: 초록 */
+  }
+  
+  .sport-baseball {
+    background-color: #0033a0; /* 야구: 진한 파랑 */
+  }
+  
+  .sport-basketball {
+    background-color: #ff6600; /* 농구: 오렌지 */
+  }
+  
+  .sport-volleyball {
+    background-color: #cc00cc; /* 배구: 보라 */
+  }
+  
+  .sport-default {
+    background-color: #777;
+  }

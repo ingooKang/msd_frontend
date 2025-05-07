@@ -1,0 +1,12 @@
+src/
+├── components/
+│   ├── Header.js
+│   ├── FilterBar.js
+│   └── DataTable.js
+├── pages/
+│   ├── LoginPage.js
+│   ├── MainPage.js
+│   └── SignupPage.js
+├── App.js
+├── config.js
+└── index.js
