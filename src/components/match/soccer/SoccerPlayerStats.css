@@ -1,0 +1,31 @@
+.soccer-player-stats {
+  margin-top: 2rem;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.player-block {
+  flex: 1;
+}
+
+.player-block h4 {
+  margin-bottom: 0.5rem;
+}
+
+.player-block table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.player-block th,
+.player-block td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 6px;
+}
+
+.player-block thead {
+  background-color: #f4f4f4;
+}

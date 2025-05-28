@@ -1,0 +1,20 @@
+.npb-pitcher-stats {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.npb-pitcher-stats th,
+.npb-pitcher-stats td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 6px 8px;
+}
+
+.npb-pitcher-stats .home {
+  background-color: #f1f8e9;
+}
+
+.npb-pitcher-stats .away {
+  background-color: #fff3e0;
+}

@@ -1,0 +1,32 @@
+.kbo-pitcher-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.kbo-pitcher-stats-table th,
+.kbo-pitcher-stats-table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+
+.kbo-pitcher-stats-table thead th {
+  background-color: #e8f5e9;
+  color: #222;
+}
+
+.kbo-pitcher-stats-table .home {
+  background-color: #fffde7;
+}
+
+.kbo-pitcher-stats-table .away {
+  background-color: #e3f2fd;
+}
+
+.no-data {
+  padding: 10px;
+  font-style: italic;
+  color: #777;
+}

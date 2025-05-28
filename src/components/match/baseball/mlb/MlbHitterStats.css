@@ -1,0 +1,51 @@
+.hitter-stats-table {
+ color: #333; /* 어두운 글씨색 */
+    background-color: #f0f0f0; /* 헤더 배경색 */
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.pitcher-stats-table th {
+    color: #333; /* 어두운 글씨색 */
+    background-color: #f0f0f0; /* 헤더 배경색 */
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.hitter-stats-table thead {
+   color: #333; /* 어두운 글씨색 */
+    background-color: #f0f0f0; /* 헤더 배경색 */
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+.hitter-row-home td {
+  background-color: #f0f8ff; /* 연한 파란색 */
+}
+
+.hitter-row-away td {
+  background-color: #fff8f0; /* 연한 주황색 */
+}
+
+.hitter-stats-table th,
+.hitter-stats-table td {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+}
+
+.hitter-stats-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.hitter-stats-table tbody tr:hover {
+    background-color: #e0f7fa;
+}
+
+.no-data {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-style: italic;
+}

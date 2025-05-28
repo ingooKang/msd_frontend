@@ -1,0 +1,48 @@
+.pitcher-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+    text-align: center;
+    background-color: #fdfdfd;
+}
+
+.pitcher-stats-table thead {
+    background-color: #222;
+    color: #fff;
+}
+
+.pitcher-stats-table th,
+.pitcher-stats-table td {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+}
+
+.pitcher-stats-table tbody tr:nth-child(even) {
+    background-color: #f7f7f7;
+}
+
+.pitcher-stats-table tbody tr:hover {
+    background-color: #e3f2fd;
+}
+
+.no-data {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-style: italic;
+}
+.pitcher-stats-table th {
+    color: #333; /* 어두운 글씨색 */
+    background-color: #f0f0f0; /* 헤더 배경색 */
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+.pitcher-row-home td {
+  background-color: #f0f8ff; /* 연한 파란색 */
+}
+
+.pitcher-row-away td {
+  background-color: #fff8f0; /* 연한 주황색 */
+}

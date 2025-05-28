@@ -1,0 +1,21 @@
+.kovo-score-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.kovo-score-table th,
+.kovo-score-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.kovo-score-table .home {
+  background-color: #f0f8ff;
+}
+
+.kovo-score-table .away {
+  background-color: #fff0f0;
+}

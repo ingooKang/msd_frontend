@@ -1,0 +1,22 @@
+.nba-team-stats table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.nba-team-stats th,
+.nba-team-stats td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.nba-team-stats thead {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.nba-team-stats tr:nth-child(even) {
+    background-color: #fafafa;
+}

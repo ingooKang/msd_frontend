@@ -1,0 +1,32 @@
+.kbo-hitter-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.kbo-hitter-stats-table th,
+.kbo-hitter-stats-table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+
+.kbo-hitter-stats-table thead th {
+  background-color: #f1f8e9;
+  color: #222;
+}
+
+.kbo-hitter-stats-table .home {
+  background-color: #fffbe6;
+}
+
+.kbo-hitter-stats-table .away {
+  background-color: #e3f2fd;
+}
+
+.no-data {
+  padding: 10px;
+  font-style: italic;
+  color: #777;
+}

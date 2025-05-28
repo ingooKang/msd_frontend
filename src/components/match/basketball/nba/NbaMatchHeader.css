@@ -1,0 +1,30 @@
+.nba-match-header {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.match-info {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.scoreboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.team-name {
+    min-width: 80px;
+    text-align: center;
+}
+
+.score {
+    font-size: 24px;
+}

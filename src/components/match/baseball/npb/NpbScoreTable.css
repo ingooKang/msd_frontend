@@ -1,0 +1,20 @@
+.npb-score-table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.npb-score-table th,
+.npb-score-table td{
+    border : 1px solid #ddd;
+    text-align: center;
+    padding: 8px;
+}
+
+
+.npb-score-table .home {
+  background-color: #e3f2fd;
+}
+
+.npb-score-table .away {
+  background-color: #fce4ec;
+}

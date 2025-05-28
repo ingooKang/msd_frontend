@@ -1,0 +1,16 @@
+.soccer-team-stats table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.soccer-team-stats th, .soccer-team-stats td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.soccer-team-stats thead {
+  background-color: #f2f2f2;
+}

@@ -1,0 +1,27 @@
+.kbl-player-stats {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.kbl-player-stats th,
+.kbl-player-stats td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.kbl-player-stats .home {
+  background-color: #f0f8ff;
+}
+
+.kbl-player-stats .away {
+  background-color: #fff5f5;
+}
+
+.no-data {
+  text-align: center;
+  padding: 10px;
+  color: #888;
+}

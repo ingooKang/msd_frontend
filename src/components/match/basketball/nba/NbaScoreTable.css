@@ -1,0 +1,35 @@
+.nba-score-table {
+    margin: 16px 0;
+    overflow-x: auto;
+}
+
+.nba-score-table table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 14px;
+}
+
+.nba-score-table th,
+.nba-score-table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+}
+
+.nba-score-table thead {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.nba-score-table tr:nth-child(2) {
+    background-color: #e8f4ff;
+}
+
+.nba-score-table tr:nth-child(3) {
+    background-color: #fff3e0;
+}
+
+.nba-score-table td:first-child {
+    font-weight: bold;
+    background-color: #fafafa;
+}

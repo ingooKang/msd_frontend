@@ -1,0 +1,25 @@
+.nba-player-stats {
+    margin-top: 16px;
+}
+
+.player-block {
+    margin-bottom: 20px;
+}
+
+.player-block table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.player-block th,
+.player-block td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.player-block thead {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
