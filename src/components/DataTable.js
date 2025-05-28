@@ -60,7 +60,7 @@ const getSportIconCode = (sporttype) => {
 
 
 
-const DataTable = ({ data }) => {
+const DataTable = ({ data, onGameAnalysis }) => {
 
     const [protoList, setProtoList] = useState([]);
 
@@ -220,7 +220,7 @@ const DataTable = ({ data }) => {
                                         />
                                     </td>
                                     <td>
-                                        <button onClick={() => alert("분석 보기 준비 중")}>분석 보기</button>
+                                        <button onClick={() => onGameAnalysis(row)}>분석 보기</button>
                                     </td>
                                 </tr>
                                 {openRowId === row.protono && (

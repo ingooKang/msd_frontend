@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import FilterBar from "./FilterBar";
 import DataTable from "./DataTable";
+import AnalysisPanel from "./analysis/AnalysisPanel";
+
 import CONFIG from "config";
 
 
@@ -16,6 +18,10 @@ function Main() {
 
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState([]);
+  const[selectedGame, setSelectedGame] =useState(null);
+  const handleGameAnalysis=(row)=>{
+    setSelectedGame(row);
+  };
 
   const handleLogin = () => {
     fetch(`${CONFIG.API_BASE}/api/login`, {
@@ -112,7 +118,10 @@ function Main() {
           Login
         </button>
       </div>
-
+   
+      <div style={{ marginBottom: "12px" }}>
+        
+      </div>
       <FilterBar
         year={year}
         setYear={setYear}
@@ -121,7 +130,12 @@ function Main() {
         roundList={roundList}
         roundInfo={roundInfo}
       />
-      <DataTable data={data} />
+      <DataTable data={data} onGameAnalysis={handleGameAnalysis}/>
+      {
+        selectedGame &&(
+          <AnalysisPanel game={selectedGame}/>
+        )
+      }
     </main>
   );
 }

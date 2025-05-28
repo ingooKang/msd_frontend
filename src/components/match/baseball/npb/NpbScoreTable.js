@@ -21,8 +21,8 @@ const NpbScoreTable = ({data})=>{
                     return (
                         <tr key={idx} className={team.ha==='h' ? 'home':'away'}>
                             <td>team.teamName</td>
-                            {Arrays.from({length: maxInnings},(_,i)=>(
-                                <td key={i}>{inningsScores[i] ?? ''}</td>
+                            {Array.from({length: maxInnings},(_,i)=>(
+                                <td key={i}>{inningScores[i] ?? ''}</td>
                             ))}
                             <td>{team.r}</td>
                         </tr>

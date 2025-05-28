@@ -2,7 +2,7 @@ import React from "react";
 import './SoccerPlayerStats.css';
 
 const SoccerPlayerStats = ({ data }) => {
-    if (!data || data.length == 0) return <p>선수 기록이 없습니다.</p>;
+    if (!data || data.length === 0) return <p>선수 기록이 없습니다.</p>;
 
     const homePlayer = data.filter(p => p.ha === 'h');
     const awayPlayer = data.filter(p => p.ha === 'a');
