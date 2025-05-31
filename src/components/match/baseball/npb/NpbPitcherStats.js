@@ -2,7 +2,7 @@ import React from 'react';
 import './NpbPitcherStats.css';
 
 const NpbPitcherStats=({data})=>{
-    if(!data|| data.length==0) return <p>투수 기록이 없습니다.</p>
+    if(!data|| data.length===0) return <p>투수 기록이 없습니다.</p>
     return (
         <table className="npb-pitcher-stats">
             <thead>

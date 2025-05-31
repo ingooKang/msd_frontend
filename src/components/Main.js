@@ -15,11 +15,14 @@ function Main() {
   const [roundList, setRoundList] = useState([]);
   const [data, setData] = useState([]);
   const [roundInfo, setRoundInfo] = useState("");
+  // 🔴 추가
+  const [roundLoaded, setRoundLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState([]);
-  const[selectedGame, setSelectedGame] =useState(null);
-  const handleGameAnalysis=(row)=>{
+  const [selectedGame, setSelectedGame] = useState(null);
+  const handleGameAnalysis = (row) => {
     setSelectedGame(row);
   };
 
@@ -41,37 +44,34 @@ function Main() {
       });
   };
 
-  // 최초 로딩 시 현재 회차 자동 세팅
-  useEffect(() => {
-    fetch(`${CONFIG.API_BASE}/api/toto/current-round`)
-      .then((res) => res.json())
-      .then((data) => {
+useEffect(() => {
+  const fetchInitialData = async () => {
+    try {
+      const res = await fetch(`${CONFIG.API_BASE}/api/toto/current-round`);
+      const { year: currentYear, round: currentRound } = await res.json();
 
-        console.log("✅ 현재 회차:", data);
-        if (data.year && data.round) {
-          setYear(data.year);
-          setRound(data.round);
-        }
-      })
-      .catch((err) => console.error("현재 회차 불러오기 실패", err));
-  }, []);
-  // 연도 변경 → 회차 리스트 로드
-  useEffect(() => {
-    fetch(`${CONFIG.API_BASE}/api/toto/rounds?year=${year}`)
-      .then((res) => res.json())
-      .then((list) => {
-        setRoundList(list);
-        if (!round && list.length > 0) {
-          setRound(list[0]);
-        }
+      if (currentYear && currentRound) {
+        setYear(currentYear);
+        setRound(currentRound);
 
-      })
-      .catch((err) => console.error("회차 불러오기 오류: ", err));
-  }, [year]);
+        const roundsRes = await fetch(`${CONFIG.API_BASE}/api/toto/rounds?year=${currentYear}`);
+        const roundsList = await roundsRes.json();
+        setRoundList(roundsList);
+      }
+    } catch (err) {
+      console.error("🚨 초기 데이터 로딩 실패:", err);
+    }
+  };
+
+  fetchInitialData();
+}, []);
+
 
   // 연도, 회차 → 경기 데이터 로드
   useEffect(() => {
     if (year && round) {
+       setLoading(true); // 🔴 로딩 시작
+
       fetch(`${CONFIG.API_BASE}/api/toto/search?year=${year}&round=${round}`)
         .then((res) => res.json())
         .then((result) => {
@@ -97,6 +97,13 @@ function Main() {
     }
   }, [year, round]);
 
+  useEffect(() => {
+    if (selectedGame) {
+      const el = document.getElementById("analysis-section");
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedGame])
+
   return (
     <main style={{ flex: 1, padding: "10px" }}>
       {/* ✅ 로그인 박스 상단 우측 */}
@@ -118,9 +125,9 @@ function Main() {
           Login
         </button>
       </div>
-   
+
       <div style={{ marginBottom: "12px" }}>
-        
+
       </div>
       <FilterBar
         year={year}
@@ -130,10 +137,13 @@ function Main() {
         roundList={roundList}
         roundInfo={roundInfo}
       />
-      <DataTable data={data} onGameAnalysis={handleGameAnalysis}/>
+      <DataTable data={data} onGameAnalysis={handleGameAnalysis} />
       {
-        selectedGame &&(
-          <AnalysisPanel game={selectedGame}/>
+        selectedGame && (
+          <div id="analysis-section" style={{ marginTop: "24px", padding: "16px", borderTop: "2px solid #ccc" }}>
+            <AnalysisPanel game={selectedGame} />
+          </div>
+
         )
       }
     </main>

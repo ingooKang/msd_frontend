@@ -9,11 +9,8 @@ import SoccerDetailPanel from "./match/soccer/SoccerDetailPanel";
 import NbaDetailPanel from "./match/basketball/nba/NbaDetailPanel";
 import KblDetailPanel from "./match/basketball/kbl/KblDetailPanel";
 import KovoDetailPanel from "./match/vollyball/kovo/KovoDetailPanel";
+import AnalysisPanel from "./analysis/AnalysisPanel";
 
-const normalize = (value) => {
-    if (value == null) console.warn("normalize(): null 값 발생", value);
-    return String(value || "").trim();
-};
 
 const getDetailComponent = (row) => {
     if (row.dtlResult !== 'Y') return null;
@@ -24,13 +21,13 @@ const getDetailComponent = (row) => {
         return <SoccerDetailPanel gameId={row.game_id} />
     } else if (sporttype === '농구') {
         if (lname === 'NBA') {
-                return <NbaDetailPanel gameId={row.game_id} />;
-            } else if (lname === 'KBL' || lname === 'WKBL') {
-                return <KblDetailPanel gameId={row.game_id} />;   
+            return <NbaDetailPanel gameId={row.game_id} />;
+        } else if (lname === 'KBL' || lname === 'WKBL') {
+            return <KblDetailPanel gameId={row.game_id} />;
         }
-    }else if(sporttype==='배구'){
-        if(lname==='KOVO남'||lname==='KOVO여'){
-            return <KovoDetailPanel gameId={row.game_id}/>;
+    } else if (sporttype === '배구') {
+        if (lname === 'KOVO남' || lname === 'KOVO여') {
+            return <KovoDetailPanel gameId={row.game_id} />;
         }
     }
 
@@ -63,7 +60,7 @@ const getSportIconCode = (sporttype) => {
 const DataTable = ({ data, onGameAnalysis }) => {
 
     const [protoList, setProtoList] = useState([]);
-
+    const[selectedAnalysisRow, setSelectedAnalysisRow]=useState(null);
     const handleMatchSelect = (e, matchKey, item) => {
         setProtoList((prev) => {
             const filtered = prev.filter(p => p.matchKey !== matchKey);
@@ -185,13 +182,13 @@ const DataTable = ({ data, onGameAnalysis }) => {
                                     <td>{row.type_Batname}</td>
                                     <td>
                                         <span title={row.home_toolTip}>
-                                            {row.abbr} {row.home_rnk} {getRankChangeIcon(row.home_rnk_change)}
+                                            {row.abbr} {row.home_rnk} {getRankChangeIcon(row.homeRnkChange)}
                                         </span>
                                     </td>
                                     <td>{row.htname} {row.hscore} - {row.ascore} {row.atname}</td>
                                     <td>
                                         <span title={row.away_toolTip}>
-                                            {row.away_div} {row.away_rnk} {getRankChangeIcon(row.away_rnk_change)}
+                                            {row.away_div} {row.away_rnk} {getRankChangeIcon(row.awayRnkChange)}
                                         </span>
                                     </td>
                                     <td>{row.handy || row.sum || row.underover || ""}</td>
@@ -220,13 +217,29 @@ const DataTable = ({ data, onGameAnalysis }) => {
                                         />
                                     </td>
                                     <td>
-                                        <button onClick={() => onGameAnalysis(row)}>분석 보기</button>
+                                        <button onClick={() => setSelectedAnalysisRow(prev=>prev?.protono===row.protono?null:row)}
+                                            style={{
+                                                backgroundColor: "#0d6efd",
+                                                color: "#fff",
+                                                border: "none",
+                                                borderRadius: "4px",
+                                                padding: "4px 10px",
+                                                cursor: "pointer",
+                                                fontWeight: "bold"
+                                            }}>분석보기</button>
                                     </td>
                                 </tr>
                                 {openRowId === row.protono && (
                                     <tr>
                                         <td colSpan={18}>
                                             {getDetailComponent(row)}
+                                        </td>
+                                    </tr>
+                                )}
+                                {selectedAnalysisRow?.protono === row.protono && (
+                                    <tr>
+                                        <td colSpan={20}>
+                                            <AnalysisPanel game={selectedAnalysisRow}/>
                                         </td>
                                     </tr>
                                 )}

@@ -12,11 +12,6 @@ function App() {
     schedule:[],
   });
 
-  useEffect(()=>{
-    fetch(`${CONFIG.API_BASE}/api/toto/dashboard`)
-    .then((res)=> res.json())
-    .then((data)=> setTotoData(data));
-  },[]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
