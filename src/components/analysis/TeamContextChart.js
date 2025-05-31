@@ -10,6 +10,8 @@ Chart.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, C
 
 const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) => {
     const [stats, setStats] = useState(null);
+    const [gameCount, setGameCount] = useState(10); // 또는 기본값 20 등
+    const [lastGameStats, setLastGameStats] = useState([]);
 
     const summarizeRankData = (data, teamName) => {
         const teamData = data.filter(d => d.teamName === teamName);
@@ -27,8 +29,6 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) =
     };
 
     useEffect(() => {
-        debugger;
-
         if (!teamName || !leagueName) return;
 
         const url = `${CONFIG.API_BASE}/api/stats/team-context?teamName=${teamName}&leagueName=${leagueName}`;
@@ -60,6 +60,23 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) =
                 console.error("🚨 fetch 실패:", err);
             });
     }, [teamName, leagueName]);
+    useEffect(() => {
+        if (!teamName || !leagueName || !gameCount) return;
+
+        const url = `${CONFIG.API_BASE}/api/stats/getGameHist?teamName=${teamName}&leagueName=${leagueName}&count=${gameCount}`;
+        console.log("📡 fetch game history:", url);
+
+        fetch(url)
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("🎯 최근 경기 데이터:", data);
+                setLastGameStats(data);
+            })
+            .catch((err) => {
+                console.error("🚨 최근 경기 데이터 불러오기 실패:", err);
+            });
+    }, [teamName, leagueName, gameCount]);
+
 
     if (!stats) return <div>Loading chart data...</div>;
 
@@ -70,6 +87,7 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) =
     const drawData = labels.map(key => stats[key]?.drawCount ?? 0);
     const loseData = labels.map(key => stats[key]?.loseCount ?? 0);
     const maxBars = 10;
+
     // 기존 데이터에서 앞에서 10개만 추출
     const limitedLabels = labels.slice(0, maxBars);
     const limitedWinData = winData.slice(0, maxBars);
@@ -102,7 +120,8 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) =
             },
         ],
     };
-
+    const thStyle = { border: "1px solid #ccc", padding: "8px", textAlign: "center", fontWeight: "bold" };
+    const tdStyle = { border: "1px solid #ccc", padding: "8px", textAlign: "center" };
     const options = {
         responsive: true,
         plugins: {
@@ -142,12 +161,13 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) =
         );
     }
     const rankData = rnkData?.filter(d => d.teamName === teamName);
+    const slicedRankData = rankData.slice(-10); // 마지막 10개만
     const rankChartData = {
-        labels: rankData.map(d => d.checkday),
+        labels: slicedRankData.map(d => d.checkday),
         datasets: [
             {
                 label: `${teamName} 순위 추이`,
-                data: rankData.map(d => d.rank),
+                data: slicedRankData.map(d => d.rank),
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,0.2)',
                 fill: false,
@@ -157,23 +177,17 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) =
             }
         ]
     };
-
     const rankChartOptions = {
         responsive: true,
         plugins: {
-            legend: {
-                position: 'top'
-            },
-            title: {
-                display: true,
-                text: `${teamName} 순위 추이`
-            }
+            legend: { position: 'top' },
+            title: { display: true, text: `${teamName} 순위 추이` }
         },
         scales: {
             y: {
                 reverse: true,
                 min: 1,
-                max: 10,  // 필요에 따라 더 낮춰줘
+                max: 6, // 🔽 최대 6위까지만 보이게 제한
                 ticks: {
                     stepSize: 1
                 }
@@ -202,6 +216,54 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) =
             <div style={{ marginTop: "30px" }}>
                 <h4>📈 최근 순위 변화</h4>
                 <Line data={rankChartData} options={rankChartOptions} />
+            </div>
+
+            <div style={{ marginTop: "30px" }}>
+                <div style={{ marginBottom: "10px" }}>
+                    <label>경기 수: </label>
+                    <select value={gameCount} onChange={(e) => setGameCount(parseInt(e.target.value))}>
+                        <option value={10}>최근 10경기</option>
+                        <option value={20}>최근 20경기</option>
+                    </select>
+                </div>
+                <div style={{ marginBottom: "10px" }}>
+                    <label htmlFor="gameCountSelect">표시할 경기 수: </label>
+                    <select id="gameCountSelect" value={gameCount} onChange={(e) => setGameCount(Number(e.target.value))}>
+                        <option value={10}>최근 10경기</option>
+                        <option value={20}>최근 20경기</option>
+                    </select>
+                </div>
+                <h4>📊 최근 {gameCount}경기 기록 요약</h4>
+                <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "12px" }}>
+                    <thead>
+                        <tr style={{ backgroundColor: "#f0f0f0" }}>
+                            <th style={thStyle}>구분</th>
+                            <th style={thStyle}>값</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style={tdStyle}>배당적정성</td>
+                            <td style={tdStyle}>-</td> {/* 나중에 계산된 값 삽입 */}
+                        </tr>
+                        <tr>
+                            <td style={tdStyle}>득점 / 실점</td>
+                            <td style={tdStyle}>-</td>
+                        </tr>
+                        <tr>
+                            <td style={tdStyle}>점수 합계</td>
+                            <td style={tdStyle}>-</td>
+                        </tr>
+                        <tr>
+                            <td style={tdStyle}>득실차</td>
+                            <td style={tdStyle}>-</td>
+                        </tr>
+                        <tr>
+                            <td style={tdStyle}>평균득점합산</td>
+                            <td style={tdStyle}>-</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     );
