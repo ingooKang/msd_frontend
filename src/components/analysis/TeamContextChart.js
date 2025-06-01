@@ -8,7 +8,7 @@ import { PointElement, LineElement } from 'chart.js';
 
 Chart.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ChartDataLabels, PointElement, LineElement);
 
-const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) => {
+const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog, gameId }) => {
     const [stats, setStats] = useState(null);
     const [gameCount, setGameCount] = useState(10); // 또는 기본값 20 등
     const [lastGameStats, setLastGameStats] = useState([]);
@@ -31,7 +31,7 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog }) =
     useEffect(() => {
         if (!teamName || !leagueName) return;
 
-        const url = `${CONFIG.API_BASE}/api/stats/team-context?teamName=${teamName}&leagueName=${leagueName}`;
+        const url = `${CONFIG.API_BASE}/api/stats/team-context?teamName=${teamName}&leagueName=${leagueName}&gameId=${gameId}`;
         console.log("📡 fetch url:", url);
 
         fetch(url)
