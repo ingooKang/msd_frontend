@@ -15,17 +15,17 @@ import AnalysisPanel from "./analysis/AnalysisPanel";
 const getDetailComponent = (row) => {
     if (row.dtlResult !== 'Y') return null;
 
-    const sporttype = row.sporttype?.trim();
+    const sportType = row.sporttype?.trim();
     const lname = row.lname?.trim().toUpperCase();
-    if (sporttype === '축구') {
+    if (sportType === '축구') {
         return <SoccerDetailPanel gameId={row.game_id} />
-    } else if (sporttype === '농구') {
+    } else if (sportType === '농구') {
         if (lname === 'NBA') {
             return <NbaDetailPanel gameId={row.game_id} />;
         } else if (lname === 'KBL' || lname === 'WKBL') {
             return <KblDetailPanel gameId={row.game_id} />;
         }
-    } else if (sporttype === '배구') {
+    } else if (sportType === '배구') {
         if (lname === 'KOVO남' || lname === 'KOVO여') {
             return <KovoDetailPanel gameId={row.game_id} />;
         }
@@ -44,9 +44,9 @@ const getDetailComponent = (row) => {
 };
 
 // 스포츠 배지 색상
-const getSportIconCode = (sporttype) => {
-    console.log(sporttype);
-    switch (sporttype) {
+const getSportIconCode = (sportType) => {
+    console.log(sportType);
+    switch (sportType) {
         case "축구": return "sc";
         case "야구": return "bs";
         case "농구": return "bk";
@@ -217,7 +217,7 @@ const DataTable = ({ data, onGameAnalysis }) => {
                                         />
                                     </td>
                                     <td>
-                                        <button onClick={() => setSelectedAnalysisRow(prev=>prev?.protono===row.protono?null:row)}
+                                        <button onClick={() => setSelectedAnalysisRow(prev=>prev?.protono===row.protono?null:{...row, sportType: row.sporttype})}
                                             style={{
                                                 backgroundColor: "#0d6efd",
                                                 color: "#fff",

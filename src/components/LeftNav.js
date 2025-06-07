@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from "react";
-import CONFIG from "config";
+import React, { useState, useMemo } from "react";
+
 
 function LeftNav() {
   const [buyableGames, setBuyableGames] = useState([]);
@@ -9,16 +9,7 @@ function LeftNav() {
   const [openGameTypes, setOpenGameTypes] = useState([]);
   const [openLeagues, setOpenLeagues] = useState([]);
 
-  // fetch data
-  useEffect(() => {
-    fetch(`${CONFIG.API_BASE}/api/toto/left-nav-info`)
-      .then((res) => res.json())
-      .then((data) => {
-        setBuyableGames(data.buyableGames || []);
-        setRawLeagues(data.leagues || []);
-      })
-      .catch((err) => console.error("LeftNav 정보 로딩 실패", err));
-  }, []);
+  
 
   // 게임 목록: sporttype → gametype → gameList
   const groupedBySport = useMemo(() => {

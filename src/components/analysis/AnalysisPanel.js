@@ -4,7 +4,7 @@ import TeamContextChart from "./TeamContextChart";
 
 function AnalysisPanel({ game }) {
 
-  const { lname, htname, atname, matchday, game_id } = game;
+  const { lname, htname, atname, matchday, game_id,sportType } = game;
   const [rnkData, setRnkData] = useState([]);
 
   useEffect(() => {
@@ -54,12 +54,11 @@ function AnalysisPanel({ game }) {
       <div style={{ display: "flex", gap: "40px" }}>
         <div style={{ flex: 1 }}>
           <h4>🏠 홈팀: {htname}</h4>
-          <TeamContextChart teamName={htname} leagueName={lname} rnkData={rnkData} gameId={game_id}
-          />
+          <TeamContextChart teamName={htname} leagueName={lname} rnkData={rnkData} gameId={game_id} sportType={sportType} />
         </div>
         <div style={{ flex: 1 }}>
           <h4>🚗 원정팀: {atname}</h4>
-          <TeamContextChart teamName={atname} leagueName={lname} rnkData={rnkData} gameId ={game_id} />
+          <TeamContextChart teamName={atname} leagueName={lname} rnkData={rnkData} gameId ={game_id} sportType={sportType} />
         </div>
       </div>
     </div>
