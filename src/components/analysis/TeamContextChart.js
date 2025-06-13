@@ -169,7 +169,7 @@ const TeamContextChart = ({
                         <tr>
                             <td style={tdStyle}>배당적정성</td>
                             <td style={tdStyle}>
-                                {oddsEvaluation?.win?.valueLevel ?? '-'}
+                                {oddsEvaluation?.message ?? '-'}
                             </td>
                         </tr>
                         <tr>
@@ -208,8 +208,16 @@ const TeamContextChart = ({
                                 <tr>
                                     <td style={tdStyle}>승 (Win)</td>
                                     <td style={tdStyle}>
-                                        기대확률 {typeof oddsEvaluation.win.expectedProbability === 'number' ? oddsEvaluation.win.expectedProbability.toFixed(1) : '-'}% /
-                                        배당확률 {typeof oddsEvaluation.win.impliedProbability === 'number' ? oddsEvaluation.win.impliedProbability.toFixed(1) : '-'}% /
+                                        예상 확률 {oddsEvaluation.win.expectedProbability?.toFixed(1)}% /
+                                        배당 확률 {oddsEvaluation.win.impliedProbability?.toFixed(1)}% /
+                                        <span style={{
+                                            color:
+                                                oddsEvaluation.win.gap > 10 ? 'green' :
+                                                    oddsEvaluation.win.gap > 5 ? 'orange' : 'gray',
+                                            fontWeight: 'bold'
+                                        }}>
+                                            차이 {oddsEvaluation.win.gap > 0 ? '+' : ''}{oddsEvaluation.win.gap?.toFixed(1)}%
+                                        </span> /
                                         배당 {oddsEvaluation.win.odds ?? '-'} →
                                         <strong> {oddsEvaluation.win.valueLevel ?? '-'}</strong>
                                     </td>
@@ -219,8 +227,16 @@ const TeamContextChart = ({
                                 <tr>
                                     <td style={tdStyle}>무 (Draw)</td>
                                     <td style={tdStyle}>
-                                        기대확률 {typeof oddsEvaluation.draw.expectedProbability === 'number' ? oddsEvaluation.draw.expectedProbability.toFixed(1) : '-'}% /
-                                        배당확률 {typeof oddsEvaluation.draw.impliedProbability === 'number' ? oddsEvaluation.draw.impliedProbability.toFixed(1) : '-'}% /
+                                        예상 확률 {oddsEvaluation.draw.expectedProbability?.toFixed(1)}% /
+                                        배당 확률 {oddsEvaluation.draw.impliedProbability?.toFixed(1)}% /
+                                        <span style={{
+                                            color:
+                                                oddsEvaluation.draw.gap > 10 ? 'green' :
+                                                    oddsEvaluation.draw.gap > 5 ? 'orange' : 'gray',
+                                            fontWeight: 'bold'
+                                        }}>
+                                            차이 {oddsEvaluation.draw.gap > 0 ? '+' : ''}{oddsEvaluation.draw.gap?.toFixed(1)}%
+                                        </span> /
                                         배당 {oddsEvaluation.draw.odds ?? '-'} →
                                         <strong> {oddsEvaluation.draw.valueLevel ?? '-'}</strong>
                                     </td>
@@ -230,8 +246,16 @@ const TeamContextChart = ({
                                 <tr>
                                     <td style={tdStyle}>패 (Lose)</td>
                                     <td style={tdStyle}>
-                                        기대확률 {typeof oddsEvaluation.lose.expectedProbability === 'number' ? oddsEvaluation.lose.expectedProbability.toFixed(1) : '-'}% /
-                                        배당확률 {typeof oddsEvaluation.lose.impliedProbability === 'number' ? oddsEvaluation.lose.impliedProbability.toFixed(1) : '-'}% /
+                                        예상 확률 {oddsEvaluation.lose.expectedProbability?.toFixed(1)}% /
+                                        배당 확률 {oddsEvaluation.lose.impliedProbability?.toFixed(1)}% /
+                                        <span style={{
+                                            color:
+                                                oddsEvaluation.lose.gap > 10 ? 'green' :
+                                                    oddsEvaluation.lose.gap > 5 ? 'orange' : 'gray',
+                                            fontWeight: 'bold'
+                                        }}>
+                                            차이 {oddsEvaluation.lose.gap > 0 ? '+' : ''}{oddsEvaluation.lose.gap?.toFixed(1)}%
+                                        </span> /
                                         배당 {oddsEvaluation.lose.odds ?? '-'} →
                                         <strong> {oddsEvaluation.lose.valueLevel ?? '-'}</strong>
                                     </td>
@@ -240,23 +264,37 @@ const TeamContextChart = ({
                             {oddsEvaluation.handicap && (
                                 <tr>
                                     <td style={tdStyle}>핸디캡</td>
-                                    <td style={tdStyle}>
+                                    <td style={{
+                                        ...tdStyle,
+                                        color:
+                                            oddsEvaluation.handicap.result === '적중' ? 'green' :
+                                                oddsEvaluation.handicap.result === '실패' ? 'red' : 'gray',
+                                        fontWeight: 'bold'
+                                    }}>
                                         기준 {oddsEvaluation.handicap.line ?? '-'} /
                                         점수차 {oddsEvaluation.handicap.scoreGap ?? '-'} →
-                                        <strong> {oddsEvaluation.handicap.result ?? '-'}</strong>
+                                        {oddsEvaluation.handicap.result ?? '-'}
                                     </td>
                                 </tr>
                             )}
+
                             {oddsEvaluation.overUnder && (
                                 <tr>
                                     <td style={tdStyle}>언더오버</td>
-                                    <td style={tdStyle}>
+                                    <td style={{
+                                        ...tdStyle,
+                                        color:
+                                            oddsEvaluation.overUnder.result === '오버' ? 'blue' :
+                                                oddsEvaluation.overUnder.result === '언더' ? 'purple' : 'gray',
+                                        fontWeight: 'bold'
+                                    }}>
                                         기준 {oddsEvaluation.overUnder.line ?? '-'} /
                                         합계점수 {oddsEvaluation.overUnder.totalScore ?? '-'} →
-                                        <strong> {oddsEvaluation.overUnder.result ?? '-'}</strong>
+                                        {oddsEvaluation.overUnder.result ?? '-'}
                                     </td>
                                 </tr>
                             )}
+
                         </tbody>
 
                     </table>
