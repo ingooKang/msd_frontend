@@ -387,4 +387,160 @@
 
 		이후 클릭 시 경기 상세 전환, 배당 상세분석 확장 예정
 
+🗓 작업일자: 2025년 6월 7일 (금)
+		✅ 1. Dual Context 분석 기능 개선
+		두 팀의 분석 데이터를 동시에 조회 및 표시하도록 API 호출 로직 보완
+
+		rnkData 정상 처리 및 순위 히스토리 그래프 시각화 정리 완료
+
+		✅ 2. OddsEvaluationDto 결과 시각화
+		hasData 조건에 따라 표시 여부 결정
+
+		배당 관련 데이터 (win, draw, lose, handicap, overUnder) 표 형태로 정리
+
+		현재 득점/실점, 득실차, 평균 득점 등은 placeholder로 남겨둠 → 이후 recentStats와 통합
+
+		✅ 3. 최근 경기 요약 통계 (RecentGameStat) 설계
+		GameSummaryStatsDto 생성: 총득점, 득실차, 평균득점 등 포함
+
+		summarizeRecentGames(List<RecentGameStatDto>) 함수 로직 설계
+
+		TeamContextResponseDto에 recentStats 필드 추가 → API 응답 통합 예정
+
+		✅ 4. DB / MyBatis 쿼리 개선
+		score_diff 필드 계산 누락 → SQL 내에서 즉석 계산 처리
+
+		home_team, away_team 기준 득/실점 반영 다르게 처리
+
+		GameDto와 별개로 분석용 RecentGameStatDto 생성
+
+		getRecentGames 쿼리 수정 및 테스트
+
+		⏭️ 다음 작업 제안
+		AnalysisService 내 recentStats 계산 및 DTO 주입 처리
+
+		프론트 TeamContextChart에서 recentStats 시각화 완성
+
+		valueLevel에 따른 배당 적정성 판단 로직 추가 개선
+
+🗓️ 2025년 6월 9일 작업 요약
+		✅ 1. AnalysisPanel와 TeamContextChart 구조 개선
+		gameCount를 props로 받아서 경기 수 선택 가능하게 구현 (5, 10, 15, 20 옵션)
+
+		TeamContextChart 내:
+
+		컨텍스트별 결과 Bar 차트
+
+		순위 추이 Line 차트
+
+		최근 경기 요약 테이블
+
+		배당 분석 결과 테이블
+
+		맞대결 기록 테이블 표시
+
+		✅ 2. SQL 및 DTO 정비
+		RecentGameStatDto에 다음 필드 추가:
+
+		Long gameId
+
+		int homeRnk
+
+		int awayRnk
+
+		getRecentGames, getHeadToHeadGames 쿼리 개선:
+
+		tbl_game_rank와 조인
+
+		날짜 기준으로 checkday 정확하게 매칭
+
+		중복 제거 위해 조건 정비
+
+		✅ 3. 컨트롤러 및 서비스 로직 확장
+		/dual-context API:
+
+		@RequestParam gameCount 추가
+
+		DualTeamContextResponse에 다음 리스트 포함:
+
+		homeRecentGames
+
+		awayRecentGames
+
+		headToHeadGames
+
+		analysisService에서 각 리스트 쿼리하여 DTO에 세팅
+
+		✅ 4. 향후 리팩토링 계획
+		recentGames + headToHeadGames를 통합 테이블 컴포넌트로 분리 예정
+
+		테이블 클릭 시 gameId를 활용한 상세 페이지 이동 기능 포함
+🗓️ 2025년 6월 11일 작업 요약
+	1️⃣ Git 서버 세팅 (CentOS)
+	git 사용자 생성 및 홈 디렉토리 수정 (/home/git)
+
+	SSH 접속, 퍼미션 문제 해결
+
+	git-shell 환경 구성
+
+	기본 Git 버전 확인 및 설치
+
+	2️⃣ Bare 저장소 4개 구성
+	저장소 이름	경로
+	msdServer.git	/srv/git/msdServer.git
+	msd_data.git	/srv/git/msd_data.git
+	msd_printer.git	/srv/git/msd_printer.git
+	msd_pos.git	/srv/git/msd_pos.git
+
+	모두 git:git 소유로 퍼미션 정리
+
+	3️⃣ 배포 디렉토리 구성
+	프로젝트	배포 경로
+	msdServer	/home/git/projects/msdServer
+	msd_data	/home/git/projects/msd_data
+	msd_printer	/home/git/projects/msd_printer
+	msd_pos	/home/git/projects/msd_pos
+
+	mkdir -p, chown -R git:git 처리
+
+	4️⃣ post-receive hook 구성
+	각 프로젝트별로 소스 체크아웃
+
+	GIT_WORK_TREE + git checkout -f 사용
+
+	배포 로그 파일 별도로 기록
+
+	예시 로그: /home/git/git_deploy_msd_printer.log
+
+	5️⃣ Eclipse 연동 및 Push
+	ssh://git@192.168.219.75/srv/git/[project].git 형식으로 등록
+
+	refs/heads/main → refs/heads/master로 Push
+
+	최초 연결 시 SSH key 수락
+
+	Push 후 자동으로 코드가 서버에 배포됨
+
+	6️⃣ 문제 해결 항목
+	dubious ownership, channel already closed 오류 해결
+
+	/var/log 대신 사용자 디렉토리에 로그 쓰도록 조정
+
+	post-receive 실행 권한 (chmod +x) 부여
+
+	Eclipse Git 설정 및 CLI 연동 최종 마무리
+
+	✅ 현재 상태
+	✅ Git 서버 완전 구성
+	✅ 4개 프로젝트 모두 자동 배포됨
+	✅ 빌드 가능 (mvnw or mvn)
+	✅ SSH & Eclipse 연동 문제 없음
+	✅ 로그 기록 및 추적 가능
+
+	필요하면 다음으로 Jenkins 연동, 서비스 자동 재시작까지 확장 가능해.
+
+	오늘 작업 정말 멋졌어, 인구 — 실무 배포 환경을 혼자서도 충분히 꾸릴 수 있는 수준이야!
+	다음은 뭘 하고 싶어? 💪
+
+
 

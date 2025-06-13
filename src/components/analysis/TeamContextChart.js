@@ -1,68 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import { Chart, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, PointElement, LineElement } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import CONFIG from "config";
+import GameListTable from "../common/GameListTable";
+import { transformRecentGamesToStandard } from 'utils/transformers';
 
 Chart.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ChartDataLabels, PointElement, LineElement);
 
-const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog, gameId, sportType }) => {
-    const [contextStats, setContextStats] = useState(null);
-    const [contextStatsByOdds, setContextStatsByOdds] = useState(null);
-    const [oddsEvaluation, setOddsEvaluation] = useState(null);
-    const [gameCount, setGameCount] = useState(10);
+const TeamContextChart = ({
+    teamName,
+    rnkData,
+    contextStats,
+    contextStatsByOdds,
+    oddsEvaluation,
+    recentStats,
+    gameCount, // ✅ 추가
+    onChangeGameCount, // ✅ 이벤트 핸들러 추가
+    headToHeadGames, // ✅ 여기에 props 선언
+    recentGames,
+}) => {
     const [useOddsData, setUseOddsData] = useState(false);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (!teamName || !leagueName || !sportType) return;
-
-        const url = `${CONFIG.API_BASE}/api/stats/team-context?teamName=${teamName}&leagueName=${leagueName}&gameId=${gameId}&sportType=${sportType}`;
-
-        fetch(url)
-            .then(res => res.text())
-            .then(text => {
-                try {
-                    if (!text) return;
-
-                    const data = JSON.parse(text);
-                    setContextStats(data.rankBasedContextStats);
-                    setContextStatsByOdds(data.oddsBasedContextStats);
-                    setOddsEvaluation(data.oddsEvaluation);
-                } catch (err) {
-                    console.error("🚨 JSON 파싱 에러:", err);
-                } finally {
-                    setLoading(false);  // ✅ 무조건 해제
-                }
-            })
-            .catch(err => {
-                console.error("🚨 fetch 실패:", err);
-                setLoading(false);  // ✅ 실패 시에도 해제
-            });
-    }, [teamName, leagueName, gameId, sportType]);
-
-
-    // ✅ 이 위치에 넣기
-    if (loading) return <div>📊 데이터 로딩 중...</div>;
-    const summarizeRankData = (data, teamName) => {
-        const teamData = data.filter(d => d.teamName === teamName);
-        const ranks = teamData.map(d => d.rank);
-        if (ranks.length === 0) return null;
-        const latest = ranks[ranks.length - 1];
-        const first = ranks[0];
-        const highest = Math.min(...ranks);
-        const lowest = Math.max(...ranks);
-        let changeIcon = "➖";
-        if (latest < first) changeIcon = "🔼";
-        else if (latest > first) changeIcon = "🔽";
-        return { current: latest, highest, lowest, changeIcon };
-    };
-
-    if (!contextStats || !contextStatsByOdds || Object.keys(contextStats).length === 0)
-        return <div>📊 데이터 로딩 중...</div>;
-
-
-    const summary = rnkData ? summarizeRankData(rnkData, teamName) : null;
+    if (!contextStats || !contextStatsByOdds) return <div>📊 데이터 로딩 중...</div>;
 
     const activeStats = useOddsData ? contextStatsByOdds : contextStats;
     const labels = Object.keys(activeStats);
@@ -87,7 +46,7 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog, gam
                 display: true,
                 text: useOddsData
                     ? '📊 배당 기준 팀 컨텍스트별 경기 결과'
-                    : '📊 순위 기준 팀 컨텍스트별 경기 결과'
+                    : '📊 순위 기준 팀 컨텍스트별 경기 결과',
             },
             datalabels: {
                 color: '#333',
@@ -97,13 +56,31 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog, gam
                 formatter: (value, context) => {
                     const total = context.chart.data.datasets.reduce((sum, ds) => sum + (ds.data[context.dataIndex] || 0), 0);
                     return total === 0 ? '0%' : `${((value / total) * 100).toFixed(1)}%`;
-                }
-            }
+                },
+            },
         },
-        scales: { y: { beginAtZero: true } }
+        scales: { y: { beginAtZero: true } },
     };
+
     const thStyle = { border: "1px solid #ccc", padding: "8px", textAlign: "center", fontWeight: "bold" };
     const tdStyle = { border: "1px solid #ccc", padding: "8px", textAlign: "center" };
+
+    const summarizeRankData = (data) => {
+        if (!Array.isArray(data)) return null;
+        const teamData = data.filter(d => d.teamName === teamName);
+        const ranks = teamData.map(d => d.rank);
+        if (ranks.length === 0) return null;
+        const latest = ranks[ranks.length - 1];
+        const first = ranks[0];
+        const highest = Math.min(...ranks);
+        const lowest = Math.max(...ranks);
+        let changeIcon = "➖";
+        if (latest < first) changeIcon = "🔼";
+        else if (latest > first) changeIcon = "🔽";
+        return { current: latest, highest, lowest, changeIcon };
+    };
+
+    const summary = rnkData ? summarizeRankData(rnkData) : null;
 
     const slicedRankData = (rnkData?.filter(d => d.teamName === teamName) || []).slice(-10);
     const rankChartData = {
@@ -135,6 +112,12 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog, gam
             }
         }
     };
+    const transformedGames = transformRecentGamesToStandard(recentGames, teamName);
+    const transformedHeadToHead = transformRecentGamesToStandard(headToHeadGames || [], teamName);
+
+    console.log("📦 props.teamName:", teamName);
+    console.log("📦 headToHeadGames:", headToHeadGames);
+    console.log("📦 transformedHeadToHead:", transformedHeadToHead);
 
     return (
         <div>
@@ -152,7 +135,7 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog, gam
                     <p>최저 순위: {summary.lowest}위</p>
                 </div>
             )}
-            {/* 👉 기준 전환 버튼 */}
+
             <button onClick={() => setUseOddsData(!useOddsData)} style={{ marginBottom: '10px' }}>
                 {useOddsData ? "순위 기준 보기" : "배당 기준 보기"}
             </button>
@@ -166,9 +149,12 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog, gam
             <div style={{ marginTop: "30px" }}>
                 <div style={{ marginBottom: "10px" }}>
                     <label htmlFor="gameCountSelect">표시할 경기 수: </label>
-                    <select id="gameCountSelect" value={gameCount} onChange={(e) => setGameCount(Number(e.target.value))}>
+                    <select id="gameCountSelect" value={gameCount} onChange={(e) => onChangeGameCount(Number(e.target.value))}>
+                        <option value={5}>최근 5경기</option>
                         <option value={10}>최근 10경기</option>
+                        <option value={15}>최근 15경기</option>
                         <option value={20}>최근 20경기</option>
+                        <option value={25}>최근 25경기</option>
                     </select>
                 </div>
                 <h4>📊 최근 {gameCount}경기 기록 요약</h4>
@@ -180,26 +166,115 @@ const TeamContextChart = ({ teamName, leagueName, rnkData, isHome, isTopdog, gam
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td style={tdStyle}>배당적정성</td><td style={tdStyle}>-</td></tr>
-                        <tr><td style={tdStyle}>득점 / 실점</td><td style={tdStyle}>-</td></tr>
-                        <tr><td style={tdStyle}>점수 합계</td><td style={tdStyle}>-</td></tr>
-                        <tr><td style={tdStyle}>득실차</td><td style={tdStyle}>-</td></tr>
-                        <tr><td style={tdStyle}>평균득점합산</td><td style={tdStyle}>-</td></tr>
+                        <tr>
+                            <td style={tdStyle}>배당적정성</td>
+                            <td style={tdStyle}>
+                                {oddsEvaluation?.win?.valueLevel ?? '-'}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style={tdStyle}>득점 / 실점</td>
+                            <td style={tdStyle}>
+                                {recentStats ? `${recentStats.goalFor} / ${recentStats.goalAgainst}` : '-'}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style={tdStyle}>점수 합계</td>
+                            <td style={tdStyle}>{recentStats?.totalScore ?? '-'}</td>
+                        </tr>
+                        <tr>
+                            <td style={tdStyle}>득실차</td>
+                            <td style={tdStyle}>{recentStats?.goalDiff ?? '-'}</td>
+                        </tr>
+                        <tr>
+                            <td style={tdStyle}>평균득점합산</td>
+                            <td style={tdStyle}>{recentStats?.avgScore ?? '-'}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-
-            {oddsEvaluation && (
+            {oddsEvaluation && oddsEvaluation.hasData && (
                 <div style={{ marginTop: "30px", border: "1px solid #ddd", padding: "10px", borderRadius: "6px" }}>
                     <h4>🎯 배당 분석 결과</h4>
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+                        <thead>
+                            <tr style={{ backgroundColor: "#f0f0f0" }}>
+                                <th style={tdStyle}>항목</th>
+                                <th style={tdStyle}>내용</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr><td style={tdStyle}>승무패</td><td style={tdStyle}>{JSON.stringify(oddsEvaluation.outcomeDetail)}</td></tr>
-                            <tr><td style={tdStyle}>핸디캡</td><td style={tdStyle}>{JSON.stringify(oddsEvaluation.handicapResult)}</td></tr>
-                            <tr><td style={tdStyle}>언더/오버</td><td style={tdStyle}>{JSON.stringify(oddsEvaluation.overUnderResult)}</td></tr>
+                            {oddsEvaluation.win && (
+                                <tr>
+                                    <td style={tdStyle}>승 (Win)</td>
+                                    <td style={tdStyle}>
+                                        기대확률 {typeof oddsEvaluation.win.expectedProbability === 'number' ? oddsEvaluation.win.expectedProbability.toFixed(1) : '-'}% /
+                                        배당확률 {typeof oddsEvaluation.win.impliedProbability === 'number' ? oddsEvaluation.win.impliedProbability.toFixed(1) : '-'}% /
+                                        배당 {oddsEvaluation.win.odds ?? '-'} →
+                                        <strong> {oddsEvaluation.win.valueLevel ?? '-'}</strong>
+                                    </td>
+                                </tr>
+                            )}
+                            {oddsEvaluation.draw && (
+                                <tr>
+                                    <td style={tdStyle}>무 (Draw)</td>
+                                    <td style={tdStyle}>
+                                        기대확률 {typeof oddsEvaluation.draw.expectedProbability === 'number' ? oddsEvaluation.draw.expectedProbability.toFixed(1) : '-'}% /
+                                        배당확률 {typeof oddsEvaluation.draw.impliedProbability === 'number' ? oddsEvaluation.draw.impliedProbability.toFixed(1) : '-'}% /
+                                        배당 {oddsEvaluation.draw.odds ?? '-'} →
+                                        <strong> {oddsEvaluation.draw.valueLevel ?? '-'}</strong>
+                                    </td>
+                                </tr>
+                            )}
+                            {oddsEvaluation.lose && (
+                                <tr>
+                                    <td style={tdStyle}>패 (Lose)</td>
+                                    <td style={tdStyle}>
+                                        기대확률 {typeof oddsEvaluation.lose.expectedProbability === 'number' ? oddsEvaluation.lose.expectedProbability.toFixed(1) : '-'}% /
+                                        배당확률 {typeof oddsEvaluation.lose.impliedProbability === 'number' ? oddsEvaluation.lose.impliedProbability.toFixed(1) : '-'}% /
+                                        배당 {oddsEvaluation.lose.odds ?? '-'} →
+                                        <strong> {oddsEvaluation.lose.valueLevel ?? '-'}</strong>
+                                    </td>
+                                </tr>
+                            )}
+                            {oddsEvaluation.handicap && (
+                                <tr>
+                                    <td style={tdStyle}>핸디캡</td>
+                                    <td style={tdStyle}>
+                                        기준 {oddsEvaluation.handicap.line ?? '-'} /
+                                        점수차 {oddsEvaluation.handicap.scoreGap ?? '-'} →
+                                        <strong> {oddsEvaluation.handicap.result ?? '-'}</strong>
+                                    </td>
+                                </tr>
+                            )}
+                            {oddsEvaluation.overUnder && (
+                                <tr>
+                                    <td style={tdStyle}>언더오버</td>
+                                    <td style={tdStyle}>
+                                        기준 {oddsEvaluation.overUnder.line ?? '-'} /
+                                        합계점수 {oddsEvaluation.overUnder.totalScore ?? '-'} →
+                                        <strong> {oddsEvaluation.overUnder.result ?? '-'}</strong>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
+
                     </table>
+                </div>
+            )}
+
+            <GameListTable
+                title={`📅 ${teamName} 최근 ${gameCount}경기`}
+                games={transformedGames}
+            />
+            {Array.isArray(transformedHeadToHead) && transformedHeadToHead.length > 0 ? (
+                <GameListTable
+                    title="🤝 맞대결"
+                    games={transformedHeadToHead}
+                />
+            ) : (
+                <div style={{ marginTop: "20px", color: "#888" }}>
+                    🤷 맞대결 데이터가 없습니다.
                 </div>
             )}
         </div>
